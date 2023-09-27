@@ -1,7 +1,9 @@
 package com.luv2code.springmvc;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,7 +50,7 @@ public class GradebookControllerTest {
   private StudentDao studentDao;
 
   @Mock
-  private StudentAndGradeService studentAndGradeServiceMock;
+  private StudentAndGradeService studentCreateServiceMock;
 
   @BeforeAll
   public static void setup() {
@@ -75,9 +77,9 @@ public class GradebookControllerTest {
     List<CollegeStudent> collegeStudentList = new ArrayList<>(
         Arrays.asList(studentOne, studentTwo));
 
-    when(studentAndGradeServiceMock.getGradebook()).thenReturn(collegeStudentList);
+    when(studentCreateServiceMock.getGradebook()).thenReturn(collegeStudentList);
 
-    assertIterableEquals(collegeStudentList, studentAndGradeServiceMock.getGradebook());
+    assertIterableEquals(collegeStudentList, studentCreateServiceMock.getGradebook());
 
     MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/"))
         .andExpect(status().isOk()).andReturn();
@@ -89,6 +91,13 @@ public class GradebookControllerTest {
 
   @Test
   public void createStudentHttpRequest() throws Exception {
+    CollegeStudent studentOne = new CollegeStudent("Eric",
+        "Roby", "eric.roby@luv2code_school.com");
+
+    List<CollegeStudent> collegeStudentList = new ArrayList<>(Arrays.asList(studentOne));
+
+    when(studentCreateServiceMock.getGradebook()).thenReturn(collegeStudentList);
+
     MvcResult mvcResult = this.mockMvc.perform(post("/")
             .contentType(MediaType.APPLICATION_JSON)
             .param("firstname", request.getParameterValues("firstname"))
@@ -104,6 +113,31 @@ public class GradebookControllerTest {
         .findByEmailAddress("chad.darby@luv2code_school.com");
 
     assertNotNull(verifyStudent, "Student should be found");
+  }
+
+  @Test
+  public void deleteStudentHttpRequest() throws Exception {
+    assertTrue(studentDao.findById(1).isPresent());
+
+    MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+        .get("/delete/student/{id}", 1))
+        .andExpect(status().isOk()).andReturn();
+
+    ModelAndView mav = mvcResult.getModelAndView();
+
+    ModelAndViewAssert.assertViewName(mav, "index");
+
+    assertFalse(studentDao.findById(1).isPresent());
+  }
+
+  @Test
+  public void deleteStudentHttpRequestErrorPage() throws Exception {
+    MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/delete/student/{id}", 0))
+        .andExpect(status().isOk()).andReturn();
+
+    ModelAndView mav = mvcResult.getModelAndView();
+
+    ModelAndViewAssert.assertViewName(mav, "error");
   }
 
   @AfterEach
