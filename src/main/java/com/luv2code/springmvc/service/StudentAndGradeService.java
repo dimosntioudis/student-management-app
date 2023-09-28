@@ -122,7 +122,7 @@ public class StudentAndGradeService {
         return studentId;
       }
       studentId = grade.get().getStudentId();
-      mathGradeDao.deleteById(studentId);
+      mathGradeDao.deleteById(id);
     }
 
     if (gradeType.equals("science")) {
@@ -131,7 +131,7 @@ public class StudentAndGradeService {
         return studentId;
       }
       studentId = grade.get().getStudentId();
-      scienceGradeDao.deleteById(studentId);
+      scienceGradeDao.deleteById(id);
     }
 
     if (gradeType.equals("history")) {
@@ -140,7 +140,7 @@ public class StudentAndGradeService {
         return studentId;
       }
       studentId = grade.get().getStudentId();
-      historyGradeDao.deleteById(studentId);
+      historyGradeDao.deleteById(id);
     }
     return studentId;
   }

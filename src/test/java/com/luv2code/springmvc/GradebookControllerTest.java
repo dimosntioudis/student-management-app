@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,7 +38,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.ModelAndView;
 
-@TestPropertySource("/application.properties")
+@TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
 public class GradebookControllerTest {
@@ -229,7 +228,7 @@ public class GradebookControllerTest {
   }
 
   @Test
-  public void createaAValidGradeHttpRequestStudentDoesNotExistEmptyResponse() throws Exception {
+  public void createAValidGradeHttpRequestStudentDoesNotExistEmptyResponse() throws Exception {
     MvcResult mvcResult = this.mockMvc.perform(post("/grades")
             .contentType(MediaType.APPLICATION_JSON)
             .param("grade", "85.00")
@@ -265,7 +264,7 @@ public class GradebookControllerTest {
     assertTrue(mathGrade.isPresent());
 
     MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-        .get("/grades/{id}/{gradeType}", 1, "math"))
+            .get("/grades/{id}/{gradeType}", 1, "math"))
         .andExpect(status().isOk()).andReturn();
 
     ModelAndView mav = mvcResult.getModelAndView();
@@ -285,7 +284,7 @@ public class GradebookControllerTest {
     assertFalse(mathGrade.isPresent());
 
     MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-        .get("/grades/{id}/{gradeType}", 2, "math"))
+            .get("/grades/{id}/{gradeType}", 2, "math"))
         .andExpect(status().isOk())
         .andReturn();
 
